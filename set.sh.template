@@ -1,4 +1,7 @@
 #!/bin/bash
+# テンプレートファイルの場所。生成時に置換されるか、デフォルト値が使用される。
+readonly TEMPLATE_FILE="${TEMPLATE_PATH:-~/program/template.cpp}"
+
 readonly arg1=$1
 readonly arg2=$2
 
@@ -49,7 +52,7 @@ elif [ "$arg1" = "make" ];then
         if [[ " ${alpha[*]} " =~ " ${arg2} " ]] || [[ " ${ALPHA[*]} " =~ " ${arg2} " ]]; then
             problem_letter_found=true
             target_file="${contest_num}${arg2}.cpp"
-            cp ~/program/template.cpp "$target_file"
+            cp "$TEMPLATE_FILE" "$target_file"
         fi
 
         if [ "$problem_letter_found" = false ]; then

@@ -1,4 +1,9 @@
 #!/bin/bash
+readonly SCRIPT_DIR=$(cd $(dirname $0); pwd)
+# テンプレートファイルの場所。環境変数 TEMPLATE_PATH があればそれを使用し、なければデフォルト値を使用。
+# デフォルトは同じディレクトリの template.cpp
+readonly TEMPLATE_FILE="${TEMPLATE_PATH:-$SCRIPT_DIR/template.cpp}"
+
 readonly arg1=$1
 readonly arg2=$2
 readonly arg3=$3
@@ -7,8 +12,9 @@ readonly ALPHA=("A" "B" "C" "D" "E")
 if [ "$arg1" = "make" ];then
     if [ "$arg2" ];then
         mkdir -p "$arg2"
-        cp ~/program/template.cpp "$arg2"/main.cpp
-        cp ./set.sh.template "$arg2"/set.sh
+        cp "$TEMPLATE_FILE" "$arg2"/main.cpp
+        # 子ディレクトリの set.sh にも TEMPLATE_PATH を継承させるために sed で置換してコピーする
+        sed "s|~/program/template.cpp|$TEMPLATE_FILE|g" ./set.sh.template > "$arg2"/set.sh
         chmod +x "$arg2"/set.sh
     else 
         echo "No arg"
@@ -31,14 +37,14 @@ elif [ "$arg1" = "all" ];then
         
         # Create the main contest directory (e.g., "abc444")
         mkdir -p "$dir_name"
-        cp ./set.sh.template "$dir_name"/set.sh
+        sed "s|~/program/template.cpp|$TEMPLATE_FILE|g" ./set.sh.template > "$dir_name"/set.sh
         chmod +x "$dir_name"/set.sh
 
         idx=0
         # 小文字
         if [[ "${alpha[*]}" =~ $arg3 ]]; then
             while [ "$idx" -lt "${#alpha[@]}" ]; do
-                cp ~/program/template.cpp "$dir_name/${alpha[$idx]}".cpp
+                cp "$TEMPLATE_FILE" "$dir_name/${alpha[$idx]}".cpp
                 if [ "${alpha[$idx]}" = "$arg3" ]; then
                     break
                 fi
@@ -47,7 +53,7 @@ elif [ "$arg1" = "all" ];then
         # 大文字
         elif [[ "${ALPHA[*]}" =~ $arg3 ]]; then
             while [ "$idx" -lt "${#ALPHA[@]}" ]; do
-                cp ~/program/template.cpp "$dir_name/${ALPHA[$idx]}".cpp
+                cp "$TEMPLATE_FILE" "$dir_name/${ALPHA[$idx]}".cpp
                 if [ "${ALPHA[$idx]}" = "$arg3" ]; then
                     break
                 fi
