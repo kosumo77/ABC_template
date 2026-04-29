@@ -1,0 +1,63 @@
+#!/bin/bash
+readonly arg1=$1
+readonly arg2=$2
+
+readonly alpha=("a" "b" "c" "d" "e")
+readonly ALPHA=("A" "B" "C" "D" "E")
+
+# Function to get contest number from current directory name
+get_contest_num() {
+    local dir_name=$(basename "$(pwd)")
+    if [[ "$dir_name" =~ ^abc ]]; then
+        echo "$dir_name" | sed -E 's/[^0-9]*([0-9]+).*/\1/'
+    else
+        echo "$dir_name" # Assume directory name is just the number if no 'abc' prefix
+    fi
+}
+
+if [ "$arg1" = "comp" ];then
+    if [ "$arg2" ];then
+        if [ -e "$arg2" ];then
+            g++ "$arg2" -o a.out -I"$HOME/program/ac-library"
+        else
+            echo "No such file: $arg2"
+        fi
+    else
+        echo "No file specified for compilation."
+    fi
+elif [ "$arg1" = "comprun" ];then
+    if [ "$arg2" ];then
+        if [ -e "$arg2" ];then
+            g++ "$arg2" -o a.out -I"$HOME/program/ac-library"
+            ./a.out
+        else
+            echo "No such file: $arg2"
+        fi
+    else
+        echo "No file specified for compilation and run."
+    fi
+elif [ "$arg1" = "make" ];then
+    if [ "$arg2" ];then
+        contest_num=$(get_contest_num)
+        if [ -z "$contest_num" ]; then
+            echo "Could not determine contest number from directory name."
+            exit 1
+        fi
+
+        problem_letter_found=false
+        # Check if arg2 is a valid problem letter (either lowercase or uppercase)
+        if [[ " ${alpha[*]} " =~ " ${arg2} " ]] || [[ " ${ALPHA[*]} " =~ " ${arg2} " ]]; then
+            problem_letter_found=true
+            target_file="${contest_num}${arg2}.cpp"
+            cp ~/program/template.cpp "$target_file"
+        fi
+
+        if [ "$problem_letter_found" = false ]; then
+            echo "Invalid problem letter: $arg2"
+        fi
+    else
+        echo "Usage: ./set.sh make <problem_letter>"
+    fi
+else
+    echo "Usage: ./set.sh comp <filename>, ./set.sh comprun <filename>, or ./set.sh make <problem_letter>"
+fi
