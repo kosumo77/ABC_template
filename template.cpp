@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 #include <atcoder/all>
-#define rep(i,m,n) for (int i = m; i < (n); i++)
-#define REP(i,m,n) for (int i = m; i <= (n); i++)
+#define rep(i,m,n) for (ll i = m; i < ll(n); i++)
+#define REP(i,m,n) for (ll i = m; i <= ll(n); i++)
 #define all(a) a.begin(),a.end()
 using namespace std;
 using ll = long long;
@@ -73,6 +73,10 @@ void outln(const vector<T>& v, int start_index = 0) {
         cout << v[i] << (i == v.size() - 1 ? "" : " ");
     }
     cout << endl;
+}
+
+ll ceil_div(ll a,ll b){
+    return a / b + (a % b != 0);
 }
 template <typename T>
 inline vector<vector<T>> make_vec2(const size_t H, const size_t W, const T& init) {
